@@ -1,6 +1,6 @@
 #### Patientenverwaltung_WS2021
 
-## Gebrauchte Software
+### Gebrauchte Software
 
 * [x] Debian (Dev Environment)
 * [x] Vim (Editor)
@@ -10,6 +10,11 @@
 * [x] Reportlab (Pytion PDF Gen module)
 * [x] Reportlab (Pytion PDF Gen module)
 * [x] pytweening (Pytion Notification module)
+
+### Führen Sie die Anwendung aus
+## Windows
+1- install python >=3
+2- `git clone [](https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021.git)`
 
 ## Patienten verwaltung Überblick
 ![](app_images/Einloggen.png)
