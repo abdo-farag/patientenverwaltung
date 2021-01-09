@@ -14,7 +14,8 @@
 ### Führen Sie die Anwendung aus
 ## Windows
 1- install python >=3
-2- `git clone [](https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021.git)`
+
+2- `git clone https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021.git`
 
 ## Patienten verwaltung Überblick
 ![](app_images/Einloggen.png)
