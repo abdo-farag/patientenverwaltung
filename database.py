@@ -15,7 +15,7 @@ DATABASE_NAME   = global_module.DATABASE_NAME
 default_path = global_module.default_path
 Path(default_path).mkdir(parents=True, exist_ok=True)
 
-class Database:
+class Database(object):
     '''
         Database Class for sqlite3
         :params conn - sqlite3Connection
