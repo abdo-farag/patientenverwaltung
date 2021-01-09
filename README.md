@@ -17,6 +17,8 @@
 
 2- `git clone https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021.git`
 
+3- On windows 'pip3 install -r requirements_win.txt' On Linus 'pip3 install -r requirements.txt' 
+
 ## Patienten verwaltung Überblick
 ![](app_images/Einloggen.png)
 ![](app_images/Patienten.png)
