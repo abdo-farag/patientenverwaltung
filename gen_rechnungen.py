@@ -31,23 +31,11 @@ if sys.platform == "win32":
 
 db = Database()
 
-<<<<<<< HEAD
-db = Database()
-=======
 key = ("default_path",)
 if (db.get_setting(key)):
     default_path = db.get_setting(key)[0][2]+'/'
 else:
     default_path = global_module.default_path
-
->>>>>>> 6a5740a394ee3b4000d9fa5feea75e7125dd7b49
-
-key = ("default_path",)
-if (db.get_setting(key)):
-    default_path = db.get_setting(key)[0][2]+'/'
-else:
-    default_path = global_module.default_path
-
 
 try:
     import Tkinter as tk
@@ -532,8 +520,8 @@ class gen_rechnungen:
                     else:
                         self.Leistung_Wert = ''
                         messagebox.showerror("Error", "Bitte, wählen Sie zurest ein Patient Record")
-                self.Leistung_Gesamt = int(self.Leistung_Gesamt.replace(' €', '')) + int(self.Leistung_Wert.replace(' €', ''))
-                self.Leistung_Gesamt = str(self.Leistung_Gesamt)+' €'
+            self.Leistung_Gesamt = int(self.Leistung_Gesamt.replace(' €', '')) + int(self.Leistung_Wert.replace(' €', ''))
+            self.Leistung_Gesamt = str(self.Leistung_Gesamt)+' €'
             self.Leistung_NameE.insert(0, record[2])
             self.Leistung_WertE.insert(0, self.Leistung_Wert)
             self.GesamtbetragE.insert(0, self.Leistung_Gesamt)
