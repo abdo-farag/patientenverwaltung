@@ -23,16 +23,21 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.graphics.shapes import Rect
 from reportlab.lib.colors import PCMYKColor, PCMYKColorSep, Color, black
 from image_base64 import button_icon
-from global_module import default_path
+import global_module
 
+if sys.platform == "win32":
+    import win32api
+    import win32print
 
-
-pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
-pdfmetrics.registerFont(TTFont('VeraBd', 'VeraBd.ttf'))
-pdfmetrics.registerFont(TTFont('VeraIt', 'VeraIt.ttf'))
-pdfmetrics.registerFont(TTFont('VeraBI', 'VeraBI.ttf'))
 
 db = Database()
+
+key = ("default_path",)
+if (db.get_setting(key)):
+    default_path = db.get_setting(key)[0][2]+'/'
+else:
+    default_path = global_module.default_path
+
 
 try:
     import Tkinter as tk
@@ -50,7 +55,6 @@ class gen_rechnungen:
     def __init__(self, parent, rechnungen_treeview):
         self.TNotebook2_t0=parent
         self.Treeview = rechnungen_treeview
-
 
         self.RechnungFrame0 = ttk.Frame(self.TNotebook2_t0)#, width=300, height=200, background="White")
         self.RechnungFrame0.place(anchor="c", relx=0.2, rely=0.5, relheight=1.0, relwidth=0.39)
@@ -74,9 +78,6 @@ class gen_rechnungen:
 
         self.ScrollbarV['command'] = self.Canvas.yview
         self.ScrollbarH['command'] = self.Canvas.xview
-
-
-        #self.ScrollbarV.pack(side="right", fill="y")
 
 
         self.PatientFrame = ttk.Frame(self.TNotebook2_t0, width=300, height=200)#, background="Black")
@@ -154,16 +155,16 @@ class gen_rechnungen:
         self.Geb_Y_Box.configure(background="white", font="Arial 10 bold", justify='left')
 
 
-        self.Button5 = ttk.Button(self.PatientFrame, width = 20, text = "Patient Suchen", command = self.search_patient_record)
-        self.Button5.place(relx=0.0, rely=0.0, height=38, width=150)
-        self.Tip5 = CreateToolTip(self.Button5,
-                'Diese Schaltfläche dient zum Suchen eines Patient.\n'
+        self.SuchenB = ttk.Button(self.PatientFrame, width = 20, text = "Patient Suchen", command = self.search_patient_record)
+        self.SuchenB.place(relx=0.0, rely=0.0, height=38, width=150)
+        self.SuchenB_Tip = CreateToolTip(self.SuchenB,
+                'Die Taste dient zum Suchen ein Patient.\n'
                 'Sie können mit ein oder mehr Eingaben Suchen. Füllen Sie die Eingebe bzw Eingaben, dann drücken Sie mich.')
 
-        self.Button3 = ttk.Button(self.PatientFrame, width = 20, text = "Auswählen", command = self.select_patient_record)
-        self.Button3.place(relx=0.5, rely=0.0, height=38, width=150)
-        self.Tip3 = CreateToolTip(self.Button3,
-                'Diese Schaltfläche dient zum einen Rekord zu auswählen, um zu aktualisieren.\n'
+        self.AuswählenB = ttk.Button(self.PatientFrame, width = 20, text = "Auswählen", command = self.select_patient_record)
+        self.AuswählenB.place(relx=0.5, rely=0.0, height=38, width=150)
+        self.AuswählenB_Tip = CreateToolTip(self.AuswählenB,
+                'Die Taste dient zum einen Rekord zu auswählen (Doppelklick).\n'
                 'Drücken Sie auf einen Rekord, dann drücken Sie mich.')
 
         self.LeistungTreeview = ScrolledTreeView(self.LeistungFrame)
@@ -200,13 +201,13 @@ class gen_rechnungen:
         self.SuchenB = ttk.Button(self.LeistungFrame, width = 20, text = "Leistung Suchen", command = self.search_leistung_record)
         self.SuchenB.place(relx=0.0, rely=0.0, height=38, width=150)
         self.SuchenB_Tip = CreateToolTip(self.SuchenB,
-                'Diese Schaltfläche dient zum Suchen eines Patient.\n'
+                'Die Taste dient zum Suchen eine Leistung.\n'
                 'Sie können mit ein oder mehr Eingaben Suchen. Füllen Sie die Eingebe bzw Eingaben, dann drücken Sie mich.')
 
         self.AuswaehlenB = ttk.Button(self.LeistungFrame, width = 20, text = "Auswählen", command = self.select_leistung_record)
         self.AuswaehlenB.place(relx=0.5, rely=0.0, height=38, width=150)
         self.AuswaehlenB_Tip = CreateToolTip(self.AuswaehlenB,
-                'Diese Schaltfläche dient zum einen Rekord zu auswählen, um zu aktualisieren.\n'
+                'Die Taste dient zum einen Rekord zu auswählen, um zu aktualisieren.\n'
                 'Drücken Sie auf einen Rekord, dann drücken Sie mich.')
 
         x = 2
@@ -287,43 +288,33 @@ class gen_rechnungen:
         self.EinfuegenB = ttk.Button(self.TNotebook2_t0, text = "Einfügen", command = self.insert_data)
         self.EinfuegenB.place(relx=0.4, rely=0.02, height=38, width=150)
         self.EinfuegenB_Tip = CreateToolTip(self.EinfuegenB,
-                'Diese Schaltfläche dient zum Hinzufügen eines neuen Patient.\n'
+                'Die Taste dient zum Hinzufügen neue Rechnung.\n'
                 'Füllen Sie die folgenden Felder aus und drücken Sie mich.')
-
-        #self.AktualisierenB = ttk.Button(self.TNotebook2_t1, width = 20, text = "Aktualisieren", command = rechnungen().update_rechnung)
-        #self.AktualisierenB.place(relx=0.4, rely=0.09, height=38, width=150)
-        #self.AktualisierenB_Tip = CreateToolTip(self.AktualisierenB,
-        #        'Diese Schaltfläche dient zum Aktualisieren Patientdaten.\n'
-        #        'Nach der Auswahl eines Rechnungen. Ändern Sie, was Sie wollen, dann drücken Sie mich.')
-
 
         self.PDF_GenB = ttk.Button(self.TNotebook2_t0, text = "PDF generieren", command = self.pdf_generieren)
         self.PDF_GenB.place(relx=0.6, rely=0.02, height=38, width=150)
         self.PDF_Gen_Tip = CreateToolTip(self.PDF_GenB,
-                'Diese Schaltfläche dient zum Hinzufügen eines neuen Patient.\n'
-                'Füllen Sie die folgenden Felder aus und drücken Sie mich.')
+                'Die Taste dient zum Generieren Rechnung im pdf-Format.')
 
         self.ResetB = ttk.Button(self.TNotebook2_t0, text = "Reset Form", command = self.reset_rechnung)
         self.ResetB.place(relx=0.6, rely=0.09, height=38, width=150)
         self.ResetB_Tip = CreateToolTip(self.ResetB,
-                'Diese Schaltfläche dient zum Hinzufügen eines neuen Patient.\n'
-                'Füllen Sie die folgenden Felder aus und drücken Sie mich.')
+                'Die Taste dient zum Zurücksetzen Rechnungsfrom zu Standard.')
 
         self.PrintB = ttk.Button(self.TNotebook2_t0, text = "Print", command = self.print_rechnung)
         self.PrintB.place(relx=0.8, rely=0.02, height=38, width=150)
         self.PrintB_Tip = CreateToolTip(self.ResetB,
-                'Diese Schaltfläche dient zum Hinzufügen eines neuen Patient.\n'
-                'Füllen Sie die folgenden Felder aus und drücken Sie mich.')
+                'Die Taste dient zum Drucken eine Rechnung, nach PDF Generierung.')
 
         self.Printer_ListBOXL = ttk.Label(self.TNotebook2_t0)
         self.Printer_ListBOXL.place(relx=0.8, rely=0.07, height=21, width=150)
         self.Printer_ListBOXL.configure(anchor='w',text='''Drucker List''',font="Arial 12 bold")
 
+        all_printers = []
         if sys.platform == "win32":
-            all_printers = subprocess.getoutput("wmic printer get name").split("\n")
-            all_printers = list(filter(None, all_printers))
-            all_printers = [x.strip(' ') for x in all_printers]
-            all_printers.remove("Name")
+            for p in win32print.EnumPrinters(win32print.PRINTER_ENUM_LOCAL):
+                printer = p[2]
+                all_printers.append(printer)
         else:
             all_printers = subprocess.getoutput("lpstat -a | awk '{print $1}'").split("\n")
 
@@ -730,16 +721,16 @@ class gen_rechnungen:
         self.canvas = canvas.Canvas(self.pdf_file, pagesize=A4)
         self.canvas.setFillColor(black)
         self.canvas.setLineWidth(.2)
-        self.canvas.setFont('Vera', 7)
+        self.canvas.setFont('Helvetica', 8)
         self.canvas.drawString(60,750,'Muster Klinik, Muster Str 1, 1234 MusterStadt')
         self.canvas.line(60,749,220,749)
-        self.canvas.setFont('Vera', 10)
+        self.canvas.setFont('Helvetica', 9)
 
         self.canvas.drawString(60,712, self.PatientNameE.get())
 
         if (self.AnschriftE.get()):
             li = list(self.AnschriftE.get().split(" ")) 
-            self.Anschrift_line1 = li[0] +' '+ li[1]
+            self.Anschrift_line1 = li[0] +' '+ li[1] + ','
             self.Anschrift_line2 = li[2] +' '+ li[3]
             self.canvas.drawString(60,700, self.Anschrift_line1)
             self.canvas.drawString(60,688, self.Anschrift_line2)
@@ -869,7 +860,7 @@ class gen_rechnungen:
         self.canvas.drawString(465,lH-43+4 ,self.GesamtbetragE.get())
         self.gray_transparent = Color(alpha=0.1)
         self.canvas.setFillColor(self.gray_transparent)
-        self.canvas.rect(60,vEc-56,475,13, fill=True, stroke=False)
+        self.canvas.rect(60,vEc-43,475,13, fill=True, stroke=False)
         self.canvas.line(60,lH-43,535,lH-43)
         self.canvas.line(60,lH-45,535,lH-45)
 
@@ -916,8 +907,6 @@ class gen_rechnungen:
         filename = default_path + "rechnung.pdf"
       
         if sys.platform == "win32":
-            import win32api
-            import win32print
             open (filename, "rb")
             win32api.ShellExecute (0, "print", filename, '/d:"%s"' % selected_printer, ".", 0)
         else:

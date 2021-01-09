@@ -6,15 +6,14 @@ import sys
 import global_module
 from pathlib import Path
 
-path = global_module.default_path
-Path(path).mkdir(parents=True, exist_ok=True)
-
 MYSQL_USER      = global_module.MYSQL_USER
 MYSQL_PASSWORD  = global_module.MYSQL_PASSWORD
 MYSQL_HOST      = global_module.MYSQL_HOST
 MYSQL_PORT      = global_module.MYSQL_PORT
 DATABASE_NAME   = global_module.DATABASE_NAME
 
+default_path = global_module.default_path
+Path(default_path).mkdir(parents=True, exist_ok=True)
 
 class Database:
     '''
@@ -25,7 +24,7 @@ class Database:
     def __init__(self):
         try:
             if global_module.Database == 'SQLite':
-                db_path = path + 'pv.db'
+                db_path = default_path + 'pv.db'
                 self.conn = sqlite3.connect(db_path)
             self.curr = self.conn.cursor()
         except:
@@ -101,12 +100,47 @@ class Database:
                 notizen TEXT
                 );
             '''
+        create_table_settings = '''
+            CREATE TABLE IF NOT EXISTS settings(
+                id Integer PRIMARY KEY AUTOINCREMENT,
+                key TEXT NOT NULL,
+                value INT NOT NULL
+                );
+            '''
+
         self.curr.execute(create_table_users)
         self.curr.execute(create_table_patienten)
         self.curr.execute(create_table_leistungen)
         self.curr.execute(create_table_rechnungen)
         self.curr.execute(create_table_termine)
+        self.curr.execute(create_table_settings)
         self.conn.commit()
+
+    def insert_setting(self, data):
+        insert_data = """
+            INSERT INTO settings(key, value)
+            VALUES(?, ?);
+        """
+        self.curr.execute(insert_data, data)
+        self.conn.commit()
+
+    def update_setting(self, data):
+        update_data = """
+            UPDATE settings SET value=? WHERE key=?
+        """
+        self.curr.execute(update_data, data)
+        self.conn.commit()
+
+    def get_setting(self, data):
+        get_data = """
+            SELECT * FROM settings WHERE key = (?);
+        """
+
+        self.curr.execute(get_data, data)
+        records = self.curr.fetchall()
+        return records
+
+
 
     def insert_user(self, data):
 

@@ -1,5 +1,6 @@
 import sys
 import bcrypt
+import global_module
 from database import Database
 from patienten import *
 from leistungen import *
@@ -7,10 +8,8 @@ from rechnungen import *
 from calender import *
 from user import *
 from manage_users import *
-import global_module
 
 db = Database()
-db.createTable()
 
 try:
     import Tkinter as tk
@@ -98,15 +97,7 @@ class login:
             self.showerror.place(relx=0.0, rely=0.80, height=51, width=500, bordermode='ignore')
             self.showerror.configure(anchor='center', font="Arial 12 bold", fg="Red")
 
-
-
     def ValidateLogin(self, _event=None):
-        #self.TNotebook1.hide(0)
-        #patienten().patienten_tab(self.TNotebook1)
-        #leistungen().leistungen_tab(self.TNotebook1)
-        #rechnungen().rechnungen_tab(self.TNotebook1)
-        #termine().termine_tab(self.TNotebook1)
-        #user().user_tab(self.TNotebook1)
         data = (self.UsernameEntry.get(),)
         global_module.active_user=self.UsernameEntry.get()
         inputData = ((self.UsernameEntry.get()), (self.PasswordEntry.get()),)
