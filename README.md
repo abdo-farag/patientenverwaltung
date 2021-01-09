@@ -32,6 +32,13 @@ Hinweis: Standard Datenbank und Rechnungen Verzeichnis `~/Patientenverwaltung/` 
 
 ![](diagramme/packages_pv.svg)
 
+![](diagramme/sequence-diagram.svg)
+
+![](diagramme/Use_Case_Diagram.svg)
+
+![](diagramme/classes_pv.svg)
+
+
 ## Patienten verwaltung Überblick
 ![](app_images/Einloggen.png)
 ![](app_images/Patienten.png)
