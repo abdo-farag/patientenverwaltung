@@ -18,8 +18,10 @@
 
 # on windows
 `pip3 install -r requirements_win.txt`
+
 # On Linux
 `apt install python3-tk`
+
 `pip3 install -r requirements.txt`
 
 
