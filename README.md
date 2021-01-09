@@ -28,7 +28,9 @@
 
 Hinweis: Standard Datenbank und Rechnungen Verzeichnis `~/Patientenverwaltung/` "Home Directory" 
 
-## 
+## Package Diagramm
+
+![](diagramme/packages_pv.svg)
 
 ## Patienten verwaltung Überblick
 ![](app_images/Einloggen.png)
