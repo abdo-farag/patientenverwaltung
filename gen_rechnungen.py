@@ -29,8 +29,18 @@ if sys.platform == "win32":
     import win32api
     import win32print
 
-
 db = Database()
+
+<<<<<<< HEAD
+db = Database()
+=======
+key = ("default_path",)
+if (db.get_setting(key)):
+    default_path = db.get_setting(key)[0][2]+'/'
+else:
+    default_path = global_module.default_path
+
+>>>>>>> 6a5740a394ee3b4000d9fa5feea75e7125dd7b49
 
 key = ("default_path",)
 if (db.get_setting(key)):
