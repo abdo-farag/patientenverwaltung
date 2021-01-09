@@ -12,12 +12,13 @@
 * [x] pytweening (Pytion Notification module)
 
 ### Führen Sie die Anwendung aus
-## Windows
 1- install python >=3
 
 2- `git clone https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021.git`
 
-3- On windows 'pip3 install -r requirements_win.txt' On Linus 'pip3 install -r requirements.txt' 
+3- On windows 'pip3 install -r requirements_win.txt'
+
+4- On Linux 'pip3 install -r requirements.txt' 
 
 ## Patienten verwaltung Überblick
 ![](app_images/Einloggen.png)
