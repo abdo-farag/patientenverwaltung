@@ -8,7 +8,7 @@
 * [x] Python3
 * [x] tkinter (Pytion GUI module)
 * [x] Reportlab (Pytion PDF Gen module)
-* [x] Reportlab (Pytion PDF Gen module)
+* [x] sqlite3 (Pytion sqlite module)
 * [x] pytweening (Pytion Notification module)
 
 ### Führen Sie die Anwendung aus
@@ -23,6 +23,10 @@
 `apt install python3-tk`
 
 `pip3 install -r requirements.txt`
+
+3- `python3 app.py`
+
+# Standard Datenbank und Rechnungen Verzeichnis `{USERHOME}/Patientenverwaltung/`
 
 
 ## Patienten verwaltung Überblick
