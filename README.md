@@ -11,5 +11,11 @@
 * [x] Reportlab (Pytion PDF Gen module)
 * [x] pytweening (Pytion Notification module)
 
-## Patienten verwaltung 
+## Patienten verwaltung Überblick
+![](app_images/Einloggen.png)
 ![](app_images/Patienten.png)
+![](app_images/Leistungen.png)
+![](app_images/Rechnung_Erstellen.png)
+![](app_images/Rechnungen_Verwaltung.png)
+![](app_images/Termine.png)
+![](app_images/Users.png)
