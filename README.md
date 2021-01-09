@@ -26,8 +26,9 @@
 
 3- `python3 app.py`
 
-# Standard Datenbank und Rechnungen Verzeichnis `{USERHOME}/Patientenverwaltung/`
+Hinweis: Standard Datenbank und Rechnungen Verzeichnis `~/Patientenverwaltung/` "Home Directory" 
 
+## 
 
 ## Patienten verwaltung Überblick
 ![](app_images/Einloggen.png)
@@ -37,3 +38,4 @@
 ![](app_images/Rechnungen_Verwaltung.png)
 ![](app_images/Termine.png)
 ![](app_images/Users.png)
+
