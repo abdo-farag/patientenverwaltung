@@ -7,15 +7,18 @@ from tkinter.filedialog import asksaveasfilename
 from tkinter import messagebox
 from database import Database
 from datetime import datetime
-#from pathlib import Path
 from tooltip import *
 from scrollbar_treeview import *
-import tkinter.font as tkFont
 from gen_rechnungen import *
-#import gen_rechnungen
-
+import global_module
 
 db = Database()
+
+key = ("default_path",)
+if (db.get_setting(key)):
+    default_path = db.get_setting(key)[0][2]+'/'
+else:
+    default_path = global_module.default_path
 
 try:
     import Tkinter as tk
@@ -145,71 +148,65 @@ class rechnungen:
 
 
         # Button widgets
-        #self.EinfuegenB = ttk.Button(self.TNotebook2_t1, text = "Einfügen", command = self.insert_data)
-        #self.EinfuegenB.place(relx=0.0, rely=0.02, height=38, width=150)
-        #self.EinfuegenB_Tip = CreateToolTip(self.EinfuegenB,
-        #        'Diese Schaltfläche dient zum Hinzufügen eines neuen Patient.\n'
-        #        'Füllen Sie die folgenden Felder aus und drücken Sie mich.')
-
         self.BezahltB = ttk.Button(self.TNotebook2_t1, width = 20, text = "Bezahlt!", command=lambda
                     mark=1: self.bezahlt_mark(mark))
         self.BezahltB.place(relx=0.0, rely=0.02, height=38, width=150)
         self.BezahltB_Tip = CreateToolTip(self.BezahltB,
-                'Diese Schaltfläche dient zum Löchen Alle Daten .')
+                'Die Taste dient zum Markieren  Rechnung als Umbezahlt.')
 
         self.UnbezahltB = ttk.Button(self.TNotebook2_t1, width = 20, text = "Unbazahlt!", command=lambda
                     mark=0: self.bezahlt_mark(mark))
         self.UnbezahltB.place(relx=0.0, rely=0.09, height=38, width=150)
         self.UnbezahltB_Tip = CreateToolTip(self.UnbezahltB,
-                'Diese Schaltfläche dient zum Löchen Alle Daten .')
+                'Die Taste dient zum Markieren  Rechnung als Umbezahlt.')
 
 
         self.AktualisierenB = ttk.Button(self.TNotebook2_t0, width = 20, text = "Aktualisieren", command = self.update_rechnung)
         self.AktualisierenB.place(relx=0.4, rely=0.09, height=38, width=150)
         self.AktualisierenB_Tip = CreateToolTip(self.AktualisierenB,
-                'Diese Schaltfläche dient zum Aktualisieren Patientdaten.\n'
-                'Nach der Auswahl eines Rechnungen. Ändern Sie, was Sie wollen, dann drücken Sie mich.')
+                'Die Taste dient zum Aktualisieren eine Rechnung.\n'
+                'Nach der Auswahl eine Rechnung. Ändern Sie, was Sie wollen, dann drücken Sie mich.')
 
 
         self.LoeschenB = ttk.Button(self.TNotebook2_t1, text = "Löschen", command = self.delete_record)
         self.LoeschenB.place(relx=0.2, rely=0.02, height=38, width=150)
         self.LoeschenB_Tip = CreateToolTip(self.LoeschenB,
-                'Diese Schaltfläche dient zum Löschen ein oder mehr Rechnungen.\n'
+                'Die Taste dient zum Löschen ein oder mehr Rechnungen.\n'
                 'Drücken Sie auf einen Rekord, dann drücken Sie mich.')
 
         self.AuswaehlenB = ttk.Button(self.TNotebook2_t1, width = 20, text = "Auswählen", command = self.select_rechnung)
         self.AuswaehlenB.place(relx=0.2, rely=0.09, height=38, width=150)
         self.AuswaehlenB_Tip = CreateToolTip(self.AuswaehlenB,
-                'Diese Schaltfläche dient zum einen Rekord zu auswählen, um zu aktualisieren.\n'
+                'Die Taste dient zum einen Rekord zu auswählen (Doppelklick), um zu aktualisieren.\n'
                 'Drücken Sie auf einen Rekord, dann drücken Sie mich.')
 
 
         self.SuchenB = ttk.Button(self.TNotebook2_t1, width = 20, text = "Suchen", command = self.search_record)
         self.SuchenB.place(relx=0.4, rely=0.02, height=38, width=150)
         self.SuchenB_Tip = CreateToolTip(self.SuchenB,
-                'Diese Schaltfläche dient zum Suchen eines Patient.\n'
+                'Die Taste dient zum Suchen eine Rechnung.\n'
                 'Sie können mit ein oder mehr Eingaben Suchen. Füllen Sie die Eingebe bzw Eingaben, dann drücken Sie mich.')
 
         self.RefreshB = ttk.Button(self.TNotebook2_t1, width = 20, text = "Refresh", command = self.display_data)
         self.RefreshB.place(relx=0.4, rely=0.09, height=38, width=150)
         self.RefreshB_Tip = CreateToolTip(self.RefreshB,
-                'Diese Schaltfläche dient zur Suche abbrechen.\n'
+                'Die Taste dient zur Suche abbrechen, oder Daten Aktualisieren.\n'
                 'Nach Ihre Suche drücken Sie mich.')
 
         self.ExportierenB = ttk.Button(self.TNotebook2_t1, width = 20, text = "Daten Exportieren", command = self.write_to_csv)
         self.ExportierenB.place(relx=0.6, rely=0.02, height=38, width=150)
         self.ExportierenB_Tip = CreateToolTip(self.ExportierenB,
-                'Diese Schaltfläche dient zum Exportieren Daten (Backup).')
+                'Die Taste dient zum Exportieren Daten (Backup).')
 
         self.ImportierenB = ttk.Button(self.TNotebook2_t1, width = 20,text='Daten Importieren', command=self.load_from_csv)
         self.ImportierenB.place(relx=0.6, rely=0.09, height=38, width=150)
         self.ImportierenB_Tip = CreateToolTip(self.ImportierenB,
-                'Diese Schaltfläche dient zum Importieren Daten (Recovery).')
+                'Die Taste dient zum Importieren Daten (Recovery).')
 
         self.ResetB = ttk.Button(self.TNotebook2_t1, width = 20, text = "Reset!", command = self.delete_all)
         self.ResetB.place(relx=0.8, rely=0.045, height=38, width=150)
         self.ResetB_Tip = CreateToolTip(self.ResetB,
-                'Diese Schaltfläche dient zum Löchen Alle Daten .')
+                'Die Taste dient zum Löchen Alle Daten .')
 
         self.refresh=self.display_data()
         
@@ -408,7 +405,7 @@ class rechnungen:
 
     def write_to_csv(self):
         header=['ID', 'Nummer', 'Patient', 'Geschlecht','Geburtdatum', 'Adresse', 'Krankenversicherung']
-        fname = asksaveasfilename(parent=self.TNotebook1, title = "Select file", filetypes=(
+        fname = asksaveasfilename(parent=self.TNotebook1, initialdir = default_path, title = "Select file", filetypes=(
             ("CSV files", "*.csv"),
             ("Excel files", "*.xlsx"),
             ("All files", "*.*")), 
@@ -424,7 +421,7 @@ class rechnungen:
     def load_from_csv(self):
         import time
         db.createTable()
-        name = askopenfilename(parent=self.TNotebook1, title = "Import File", filetypes=(
+        name = askopenfilename(parent=self.TNotebook1, initialdir = default_path, title = "Import File", filetypes=(
             ("CSV files", "*.csv"),
             ("Excel files", "*.xlsx"),
             ("All files", "*.*")),

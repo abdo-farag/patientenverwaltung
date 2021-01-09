@@ -1,17 +1,22 @@
+#! /usr/bin/env python3
+#-*- coding:utf-8 -*-
+
 import sys
 import locale
 from tkinter import *
 from ttkthemes import ThemedStyle
 import root_support
-from login import *
 import global_module
 from database import Database
 from toast import *
 
 db = Database()
+db.createTable()
 if (db.get_last_nummer_rechnung()):
     global_module.rech_nummer = int(db.get_last_nummer_rechnung()[0][0])
 notification_manager = Notification_Manager(background="white")
+
+from login import *
 
 if sys.platform == "win32":
     locale.setlocale(locale.LC_ALL, 'german')

@@ -3,11 +3,11 @@ import bcrypt
 import time
 from tkinter import *
 from ttkthemes import ThemedStyle
-from tkinter.filedialog import askopenfilename
-from tkinter.filedialog import asksaveasfilename
+from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 from tkinter import messagebox
 from database import Database
 from image_base64 import user_icon
+import fileinput
 import global_module
 
 db = Database()
@@ -45,6 +45,7 @@ class user:
         self.username=global_module.active_user 
         menu.add_command(label=self.username)
         menu.add_command(label="Passwort ändern", command=self.change_user_pass)
+        menu.add_command(label="Datenverzeichnis", command=self.data_dir)
         menu.add_command(label="Ausloggen", command=self.user_logout)
         menu.add_command(label="Beenden", command=self.Exit)
 
@@ -128,11 +129,21 @@ class user:
         for item in self.TNotebook1.winfo_children():
             item.destroy()
         self.menubutton.destroy()
-        reLogin = login.login()
-        reLogin.login_tab(self.TNotebook1)
+        login.login(self.TNotebook1)
 
     def Exit(self):
         isnotActive=("False", self.username)
         msg=tk.messagebox.askyesno("Exit", "Wollen Sie dem Programm beenden?")
         if(msg):
             sys.exit()
+
+    def data_dir(self):
+        new_dir = askdirectory(initialdir=global_module.default_path)
+        key = ("default_path",)
+        update_data = ( new_dir, "default_path", )
+        insert_data = ( "default_path", new_dir, )
+        if (db.get_setting(key)):
+            db.update_setting(update_data)
+        else:
+            db.insert_setting(insert_data)
+

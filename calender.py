@@ -8,6 +8,7 @@ from tkinter import messagebox
 from database import Database
 from tooltip import *
 from scrollbar_treeview import *
+import global_module
 
 db = Database()
 
@@ -354,7 +355,7 @@ class termine:
 
     def write_to_csv(self):
         header=['ID', 'Patient', 'Tel_Nr', 'Termin','Tag', 'Datum', 'Zweck', 'Notizen']
-        fname = asksaveasfilename(parent=self.TNotebook1, title = "Select file", filetypes=(
+        fname = asksaveasfilename(parent=self.TNotebook1, initialdir = global_module.default_path, title = "Select file", filetypes=(
             ("CSV files", "*.csv"),
             ("Excel files", "*.xlsx"),
             ("All files", "*.*")),
@@ -368,7 +369,7 @@ class termine:
     def load_from_csv(self):
         import time
         db.createTable()
-        name = askopenfilename(parent=self.TNotebook1, title = "Import File", filetypes=(
+        name = askopenfilename(parent=self.TNotebook1, initialdir = global_module.default_path, title = "Import File", filetypes=(
             ("CSV files", "*.csv"),
             ("Excel files", "*.xlsx"),
             ("All files", "*.*")),
