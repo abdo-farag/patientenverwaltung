@@ -1,21 +1,18 @@
 import sys
 import locale
 import csv
-from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
-from tkinter import messagebox
+from tkinter import messagebox, END
 from database import Database
 from datetime import datetime
-from tooltip import *
-from scrollbar_treeview import *
+from tooltip import CreateToolTip
+from scrollbar_treeview import ScrolledTreeView
 import global_module
 
-db = Database()
-
 key = ("default_path",)
-if (db.get_setting(key)):
-    default_path = db.get_setting(key)[0][2]+'/'
+if (Database().get_setting(key)):
+    default_path = Database().get_setting(key)[0][2]+'/'
 else:
     default_path = global_module.default_path
 
@@ -32,7 +29,7 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = True
 
-class leistungen:
+class leistungen(object):
     def __init__(self, parent):
 
         self.TNotebook1=parent
@@ -180,8 +177,8 @@ class leistungen:
             return "SUCCESS"
 
     def insert_data(self):
-        if (db.get_last_nummer()):
-            nummer =list(db.get_last_nummer())
+        if (Database().get_last_nummer()):
+            nummer =list(Database().get_last_nummer())
             nummer = [x[0] for x in nummer][0]
             Nummer=str(int(nummer)+1)
         else:
@@ -201,7 +198,7 @@ class leistungen:
                     self.WertK.get().replace(' €', '')+' €',
                     self.WertP.get().replace(' €', '')+' €',
                     )
-            db.insert_leistung(data)
+            Database().insert_leistung(data)
             refresh=self.display_data()
         else:
             self.valueErrorMessage = "Invalid input in field " + validata_data
@@ -217,7 +214,7 @@ class leistungen:
         for selected in selection:
             values = self.Treeview.item(selected, 'values')
             data = (values[0],)
-            db.delete_leistung(data)
+            Database().delete_leistung(data)
         refresh=self.display_data()
 
     def double_click(self, _event=None):
@@ -259,7 +256,7 @@ class leistungen:
                     self.Treeview.set(selected, '#1')
                     )
             self.Treeview.item(selected, text='', values=(data))
-            db.update_leistung(data)
+            Database().update_leistung(data)
             refresh=self.display_data()
 
         else:
@@ -296,7 +293,7 @@ class leistungen:
            refresh=self.display_data()
         else:
             i = 0
-            for record in (db.search_leistung(lst)):
+            for record in (Database().search_leistung(lst)):
                 i=i+1
                 if (i % 2):
                     self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
@@ -314,7 +311,7 @@ class leistungen:
         for data in self.Treeview.get_children():
             self.Treeview.delete(data)
         i=0
-        for record in (db.display_leistungen()):
+        for record in (Database().display_leistungen()):
             i=i+1
             if (i % 2):
                 self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
@@ -332,13 +329,13 @@ class leistungen:
             with open(fname, 'a') as leistungen:
                 self.write = csv.writer(leistungen, dialect='excel')
                 #self.write.writerow(header)
-                for record in (db.display_leistungen()):
+                for record in (Database().display_leistungen()):
                     self.write.writerow(record)
 
 
     def load_from_csv(self):
         import time
-        db.createTable()
+        Database().createTable()
         name = askopenfilename(parent=self.TNotebook1, initialdir = default_path, title = "Import File", filetypes=(
             ("CSV files", "*.csv"),
             ("Excel files", "*.xlsx"),
@@ -379,11 +376,11 @@ class leistungen:
                                 pass
                             else:
                                 lst[0]=''
-                                if (db.search_leistung(lst)):
+                                if (Database().search_leistung(lst)):
                                     pass
                                 else:
                                     del lst[0]
-                                    db.insert_leistung(lst)
+                                    Database().insert_leistung(lst)
                                     self.progress["value"] = bar
                                     self.progress.update()
                                     self.display_data()
@@ -399,6 +396,6 @@ class leistungen:
             if(error):
                 msg =  messagebox.askyesno("Error", "Es gibt keine Möglichkeit diese Daten nochmal von Datenbanken zu konstruieren.")
                 if(msg):
-                    db.delete_leistungen_table()
+                    Database().delete_leistungen_table()
                     refresh=self.display_data()
     

@@ -1,22 +1,19 @@
 import sys
 import locale
 import csv
-from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
-from tkinter import messagebox
+from tkinter import messagebox, END
 from database import Database
 from datetime import datetime
-from tooltip import *
-from scrollbar_treeview import *
+from tooltip import CreateToolTip
+from scrollbar_treeview import ScrolledTreeView
 from gen_rechnungen import *
 import global_module
 
-db = Database()
-
 key = ("default_path",)
-if (db.get_setting(key)):
-    default_path = db.get_setting(key)[0][2]+'/'
+if (Database().get_setting(key)):
+    default_path = Database().get_setting(key)[0][2]+'/'
 else:
     default_path = global_module.default_path
 
@@ -32,7 +29,7 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = True
 
-class rechnungen:
+class rechnungen(object):
     def __init__(self, parent):
 
         self.TNotebook1=parent
@@ -211,8 +208,8 @@ class rechnungen:
         self.refresh=self.display_data()
         
     def insert_data(self):
-        if (db.get_last_nummer_rechnung()):
-            nummer =list(db.get_last_nummer_rechnung())
+        if (Database().get_last_nummer_rechnung()):
+            nummer =list(Database().get_last_nummer_rechnung())
             nummer = [x[0] for x in nummer][0]
             Nummer=str(int(nummer)+1)
         else:
@@ -225,7 +222,7 @@ class rechnungen:
                 self.Datum.get(),
                 self.Gesamtbetrag.get(),
                 )
-        db.insert_rechnung(data)
+        Database().insert_rechnung(data)
         self.display_data()
         self.Nummer.delete(0, END)
         self.Patient.delete(0, END)
@@ -239,9 +236,9 @@ class rechnungen:
         for selected in selection:
             values = self.Treeview.item(selected, 'values')
             search_data=('', values[1], values[2], values[3], '', '', '', '',)
-            ID = (db.search_rechnung(search_data)[0])[0]
+            ID = (Database().search_rechnung(search_data)[0])[0]
             data = (ID,)
-            db.delete_rechnung(data)
+            Database().delete_rechnung(data)
         refresh=self.display_data()
 
     def double_click(self, _event=None):
@@ -261,7 +258,7 @@ class rechnungen:
             name = list(values[2].split(" "))
             if (name):
                 lst=('', name[0], name[1], '', '', values[3], '')
-                get_patient=db.search_patient(lst)
+                get_patient=Database().search_patient(lst)
                 geb_datum = list(get_patient[0])[4]
 
             leistungen_lst = values[4].split(",")
@@ -299,8 +296,8 @@ class rechnungen:
         selected = self.Treeview.focus()
         values = self.Treeview.item(selected, 'values')
         search_data=('', values[1], values[2], values[3], '', '', '', '',)
-        ID = (db.search_rechnung(search_data)[0])[0]
-        bezahlt = (db.search_rechnung(search_data)[0])[7]
+        ID = (Database().search_rechnung(search_data)[0])[0]
+        bezahlt = (Database().search_rechnung(search_data)[0])[7]
         data = (
                 self.gen_rech.RechnungNummerE.get(),
                 self.gen_rech.PatientNameE.get(),
@@ -313,7 +310,7 @@ class rechnungen:
                 ID,
                 )
         self.Treeview.item(selected, text='', values=(data))
-        db.update_rechnung(data)
+        Database().update_rechnung(data)
         refresh=self.display_data()
 
     def search_record(self):
@@ -338,7 +335,7 @@ class rechnungen:
            refresh=self.display_data()
         else:
             i = 0
-            for record in (db.search_rechnung(lst)):
+            for record in (Database().search_rechnung(lst)):
                 i=i+1
                 if (i % 2):
                     self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
@@ -354,11 +351,11 @@ class rechnungen:
         self.Gesamtbetrag.delete(0, END)
 
     def display_data(self):
-        nummer = db.get_last_nummer_rechnung()
+        nummer = Database().get_last_nummer_rechnung()
         for data in self.Treeview.get_children():
             self.Treeview.delete(data)
         i,j=0,0
-        for record in (db.display_rechnungen()):
+        for record in (Database().display_rechnungen()):
             bezahlt = record[7]
             record = list(record)
             if bezahlt == 0:
@@ -369,7 +366,7 @@ class rechnungen:
                 else:
                     self.Treeview.insert('', 'end', values=(record), tags = ('evenrow'))
 
-        for record in (db.display_rechnungen()):
+        for record in (Database().display_rechnungen()):
             bezahlt = record[7]
             record = list(record)
             if bezahlt == 1:
@@ -385,7 +382,7 @@ class rechnungen:
         values = self.Treeview.item(selected, 'values')
         if all(values):
             search_data=('', values[1], values[2], values[3], '', '', '', '',)
-            ID = (db.search_rechnung(search_data)[0])[0]
+            ID = (Database().search_rechnung(search_data)[0])[0]
             data = (
                     values[1],
                     values[2],
@@ -398,7 +395,7 @@ class rechnungen:
                     #self.Treeview.set(selected, '#1')
                     )
             self.Treeview.item(selected, text='', values=(data))
-            db.update_rechnung(data)
+            Database().update_rechnung(data)
             refresh=self.display_data()
 
 
@@ -414,13 +411,13 @@ class rechnungen:
             with open(fname, 'a') as rechnungen:
                 self.write = csv.writer(rechnungen, dialect='excel')
                 #self.write.writerow(header)
-                for record in (db.display_rechnungen()):
+                for record in (Database().display_rechnungen()):
                     self.write.writerow(record)
 
 
     def load_from_csv(self):
         import time
-        db.createTable()
+        Database().createTable()
         name = askopenfilename(parent=self.TNotebook1, initialdir = default_path, title = "Import File", filetypes=(
             ("CSV files", "*.csv"),
             ("Excel files", "*.xlsx"),
@@ -457,11 +454,11 @@ class rechnungen:
                             pass
                         else:
                             lst[0]=''
-                            if (db.search_rechnung(lst)):
+                            if (Database().search_rechnung(lst)):
                                 pass
                             else:
                                 del lst[0]
-                                db.insert_rechnung(lst)
+                                Database().insert_rechnung(lst)
                                 self.progress["value"] = bar
                                 self.progress.update()
                                 self.display_data()
@@ -474,5 +471,5 @@ class rechnungen:
             if(error):
                 msg =  messagebox.askyesno("Error", "Es gibt keine Möglichkeit diese Daten nochmal von Datenbanken zu konstruieren.")
                 if(msg):
-                    db.delete_rechnungen_table()
+                    Database().delete_rechnungen_table()
                     refresh=self.display_data()

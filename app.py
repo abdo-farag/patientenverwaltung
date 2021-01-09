@@ -1,19 +1,16 @@
 #! /usr/bin/env python3
 #-*- coding:utf-8 -*-
-
 import sys
 import locale
-from tkinter import *
 from ttkthemes import ThemedStyle
 import root_support
 import global_module
 from database import Database
-from toast import *
+from toast import Notification_Manager
 
-db = Database()
-db.createTable()
-if (db.get_last_nummer_rechnung()):
-    global_module.rech_nummer = int(db.get_last_nummer_rechnung()[0][0])
+Database().createTable()
+if (Database().get_last_nummer_rechnung()):
+    global_module.rech_nummer = int(Database().get_last_nummer_rechnung()[0][0])
 notification_manager = Notification_Manager(background="white")
 
 from login import *
@@ -61,10 +58,10 @@ def root_start_gui():
     root.update()
 
 def mahnung():
-    if (db.get_last_nummer_rechnung()):
-        if int(db.get_last_nummer_rechnung()[0][0]) > global_module.rech_nummer:
+    if (Database().get_last_nummer_rechnung()):
+        if int(Database().get_last_nummer_rechnung()[0][0]) > global_module.rech_nummer:
             notification_manager.success("Neue Rechnung ist im System verfügbar!", "Arial 14", 50, 'center', None, None, 500, 5000, None, None)
-            global_module.rech_nummer = int(db.get_last_nummer_rechnung()[0][0])
+            global_module.rech_nummer = int(Database().get_last_nummer_rechnung()[0][0])
         root.after(2000, mahnung)
 
 w = None
@@ -83,7 +80,7 @@ def on_closing():
     if messagebox.askokcancel("Quit", "Do you want to quit?"):
         username=global_module.active_user
         isnotActive=("False", username)
-        db.set_user_active(isnotActive)
+        Database().set_user_active(isnotActive)
         root.destroy()
 
 def destroy_login():
@@ -98,7 +95,7 @@ _ana1color = '#f6f6f6' # X11 color: 'gray85'
 _ana2color = '#f6f6f6' # Closest X11 color: 'gray92'
 
 
-class Root:
+class Root(object):
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
@@ -144,7 +141,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         username=global_module.active_user
         isnotActive=("False", username)
-        db.set_user_active(isnotActive)
+        Database().set_user_active(isnotActive)
         root.destroy()
         sys.exit(0)
 

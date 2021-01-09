@@ -1,16 +1,12 @@
 import sys, bcrypt
-from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
-from tkinter import messagebox
+from tkinter import messagebox, END
 from database import Database
 from datetime import datetime
-#from pathlib import Path
-from tooltip import *
-from scrollbar_treeview import *
+from tooltip import CreateToolTip
+from scrollbar_treeview import ScrolledTreeView
 import global_module
-
-db = Database()
 
 try:
     import Tkinter as tk
@@ -24,7 +20,7 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = True
 
-class manage_users:
+class manage_users(object):
     def __init__(self, parent):
         self.TNotebook1=parent
 
@@ -142,11 +138,11 @@ class manage_users:
                 Ist_Active,
                 )
         if all(data):
-            if db.search_user((self.Benutzername.get(),)):
+            if Database().search_user((self.Benutzername.get(),)):
                 self.valueErrorMessage = "Benutzer "+ self.Benutzername.get() +" existiert bereits"
                 messagebox.showerror("Error", self.valueErrorMessage)
             else:
-                db.insert_user(data)
+                Database().insert_user(data)
         else:
             self.valueErrorMessage = "Fülle bitte alle Felder aus."
             messagebox.showerror("Error", self.valueErrorMessage)
@@ -166,7 +162,7 @@ class manage_users:
                 self.valueErrorMessage = "Sie können den ersten Administrator nicht löschen"
                 messagebox.showerror("Error", self.valueErrorMessage)
             else:
-                db.delete_user(data)
+                Database().delete_user(data)
         refresh=self.display_data()
 
     def double_click(self, _event=None):
@@ -209,7 +205,7 @@ class manage_users:
                 self.Treeview.set(selected, '#1')
                 )
         self.Treeview.item(selected, text='', values=(data))
-        db.update_user(data)
+        Database().update_user(data)
         refresh=self.display_data()
         self.ID.delete(0, END)
         self.Benutzername.delete(0, END)
@@ -221,7 +217,7 @@ class manage_users:
         for data in self.Treeview.get_children():
             self.Treeview.delete(data)
         i=0
-        for record in (db.display_users()):
+        for record in (Database().display_users()):
             i=i+1
             if (i % 2):
                 self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))

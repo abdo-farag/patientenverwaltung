@@ -1,23 +1,15 @@
-import sys
-import os
-import subprocess
-import locale
-import csv
-from tkinter import *
+import sys, subprocess, csv
+from tkinter import PhotoImage, END, Canvas, W, E
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
 from PIL import ImageTk, Image
 from tkinter import messagebox
 from database import Database
 from datetime import datetime, timedelta
-#from pathlib import Path
-from tooltip import *
-from scrollbar_treeview import *
-import tkinter.font as tkFont
-from io import BytesIO
-import base64
+from tooltip import CreateToolTip
+from scrollbar_treeview import ScrolledTreeView
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from reportlab.graphics.shapes import Rect
@@ -29,11 +21,10 @@ if sys.platform == "win32":
     import win32api
     import win32print
 
-db = Database()
 
 key = ("default_path",)
-if (db.get_setting(key)):
-    default_path = db.get_setting(key)[0][2]+'/'
+if (Database().get_setting(key)):
+    default_path = Database().get_setting(key)[0][2]+'/'
 else:
     default_path = global_module.default_path
 
@@ -49,7 +40,7 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = True
 
-class gen_rechnungen:
+class gen_rechnungen(object):
     def __init__(self, parent, rechnungen_treeview):
         self.TNotebook2_t0=parent
         self.Treeview = rechnungen_treeview
@@ -389,8 +380,8 @@ class gen_rechnungen:
         self.TextUnten.insert(tk.END, self.text)
 
     def update_rechnung_nummer(self):
-        if (db.get_last_nummer_rechnung()):
-            nummer =list(db.get_last_nummer_rechnung())
+        if (Database().get_last_nummer_rechnung()):
+            nummer =list(Database().get_last_nummer_rechnung())
             nummer = [x[0] for x in nummer][0]
             Nummer=str(int(nummer)+1)
         else:
@@ -407,7 +398,7 @@ class gen_rechnungen:
         for data in self.PatientTreeview.get_children():
             self.PatientTreeview.delete(data)
         i=0
-        for record in (db.display_patienten()):
+        for record in (Database().display_patienten()):
             record=[record[1]] + [record[2]] + [record[4]]
             i=i+1
             if (i % 2):
@@ -419,7 +410,7 @@ class gen_rechnungen:
         for data in self.LeistungTreeview.get_children():
             self.LeistungTreeview.delete(data)
         i=0
-        for record in (db.display_leistungen()):
+        for record in (Database().display_leistungen()):
             record=[record[1]] + [record[2]]
             i=i+1
             if (i % 2):
@@ -462,7 +453,7 @@ class gen_rechnungen:
             if len(empty) == 0:
                 self.display_patient_data()
             else:
-                for record in (db.search_patient(data)):
+                for record in (Database().search_patient(data)):
                     self.Geschlecht = record[3]
                     self.Adresse = record[5]
                     self.Krankenversicherung = record [6]
@@ -510,7 +501,7 @@ class gen_rechnungen:
             if len(empty) == 0:
                 self.display_leistung_data()
             else:
-                for record in (db.search_leistung(lst)):
+                for record in (Database().search_leistung(lst)):
                     if self.Krankenversicherung == 'Pflichtversichert':
                         self.Leistung_Wert = record[3]
                         self.Leistung_count += 1
@@ -559,7 +550,7 @@ class gen_rechnungen:
             self.display_patient_data()
         else:
             i = 0
-            for record in (db.search_patient(lst)):
+            for record in (Database().search_patient(lst)):
                 record=[record[1]] + [record[2]] + [record[4]]
                 i=i+1
                 if (i % 2):
@@ -592,7 +583,7 @@ class gen_rechnungen:
            refresh=self.display_leistung_data()
         else:
             i = 0
-            for record in (db.search_leistung(lst)):
+            for record in (Database().search_leistung(lst)):
                 record=[record[1]] + [record[2]]
                 i=i+1
                 if (i % 2):
@@ -617,7 +608,7 @@ class gen_rechnungen:
                 self.GesamtbetragE.get(),
                 bezahlt,
                 )
-        db.insert_rechnung(data)
+        Database().insert_rechnung(data)
         self.display_data()
         self.reset_rechnung()
         self.PatientNameE.delete(0, END)
@@ -626,11 +617,11 @@ class gen_rechnungen:
         self.Leistungen_list=[]
 
     def display_data(self):
-        nummer = db.get_last_nummer_rechnung()
+        nummer = Database().get_last_nummer_rechnung()
         for data in self.Treeview.get_children():
             self.Treeview.delete(data)
         i,j=0,0
-        for record in (db.display_rechnungen()):
+        for record in (Database().display_rechnungen()):
             bezahlt = record[7]
             record = list(record)
             if bezahlt == 0:
@@ -641,7 +632,7 @@ class gen_rechnungen:
                 else:
                     self.Treeview.insert('', 'end', values=(record), tags = ('evenrow'))
 
-        for record in (db.display_rechnungen()):
+        for record in (Database().display_rechnungen()):
             bezahlt = record[7]
             record = list(record)
             if bezahlt == 1:
@@ -704,9 +695,9 @@ class gen_rechnungen:
         name = list(patient_name.split(" "))
         if (name):
             lst1=('', name[0], name[1], '', '', self.AnschriftE.get(), '')
-            get_patient=tuple(db.search_patient(lst1)[0])
+            get_patient=tuple(Database().search_patient(lst1)[0])
             lst2=('', '', leistung, '', '')
-            get_leistung=tuple(db.search_leistung(lst2)[0])
+            get_leistung=tuple(Database().search_leistung(lst2)[0])
             self.leistung_nr = get_leistung[1]
             if 'Pflichtversichert' in get_patient:
                 self.leistung_wert = get_leistung[3]
@@ -759,7 +750,7 @@ class gen_rechnungen:
         if (self.PatientNameE.get()):
             name = list(self.PatientNameE.get().split(" "))
             lst=('', name[0], name[1], '', '', self.AnschriftE.get(), '')
-            get_patient=db.search_patient(lst)
+            get_patient=Database().search_patient(lst)
             if any("Weiblich" in s for s in get_patient):
                 rede_name = 'Sehr geehrte Frau ' + name[1] + ','
             elif any("Männlich" in s for s in get_patient):

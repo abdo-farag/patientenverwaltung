@@ -1,16 +1,13 @@
 import csv
 import calendar, datetime, sys, subprocess
-from tkinter import *
 from tkcalendar import Calendar, DateEntry
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
-from tkinter import messagebox
+from tkinter import messagebox, END
 from database import Database
-from tooltip import *
-from scrollbar_treeview import *
+from tooltip import CreateToolTip
+from scrollbar_treeview import ScrolledTreeView
 import global_module
-
-db = Database()
 
 try:
     import Tkinter as tk
@@ -24,7 +21,7 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = True
 
-class termine:
+class termine(object):
     def __init__(self, parent):
         self.TNotebook1=parent
 
@@ -218,7 +215,7 @@ class termine:
                 self.Zweck.get(),
                 self.Notizen.get(),
                 )
-        db.insert_termin(data)
+        Database().insert_termin(data)
         self.display_data()
         self.Patient.delete(0, END)
         self.Tel_Nr.delete(0, END)
@@ -234,7 +231,7 @@ class termine:
         for selected in selection:
             values = self.Treeview.item(selected, 'values')
             data = (values[0],)
-            db.delete_termin(data)
+            Database().delete_termin(data)
         refresh=self.display_data()
 
     def double_click(self, _event=None):
@@ -281,7 +278,7 @@ class termine:
                     self.Treeview.set(selected, '#1')
                     )
             self.Treeview.item(selected, text='', values=(data))
-            db.update_termin(data)
+            Database().update_termin(data)
             refresh=self.display_data()
 
         else:
@@ -315,7 +312,7 @@ class termine:
                 self.Notizen.get(),
                 )
         i = 0
-        for record in (db.search_termin(data)):
+        for record in (Database().search_termin(data)):
             i=i+1
             if (i % 2):
                 self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
@@ -336,7 +333,7 @@ class termine:
         for data in self.Treeview.get_children():
             self.Treeview.delete(data)
         i=0
-        for record in (db.display_termine()):
+        for record in (Database().display_termine()):
             i=i+1
             if (i % 2):
                 self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
@@ -363,12 +360,12 @@ class termine:
         if (fname):
             with open(fname, 'a', newline='') as termine:
                 self.write = csv.writer(termine, dialect='excel')
-                for record in (db.display_termine()):
+                for record in (Database().display_termine()):
                     self.write.writerow(record)
 
     def load_from_csv(self):
         import time
-        db.createTable()
+        Database().createTable()
         name = askopenfilename(parent=self.TNotebook1, initialdir = global_module.default_path, title = "Import File", filetypes=(
             ("CSV files", "*.csv"),
             ("Excel files", "*.xlsx"),
@@ -406,11 +403,11 @@ class termine:
                             pass
                         else:
                             lst[0]=''
-                            if (db.search_termin(lst)):
+                            if (Database().search_termin(lst)):
                                 pass
                             else:
                                 del lst[0]
-                                db.insert_termin(lst)
+                                Database().insert_termin(lst)
                                 self.progress["value"] = bar
                                 self.progress.update()
                                 self.display_data()
@@ -423,6 +420,6 @@ class termine:
             if(error):
                 msg =  messagebox.askyesno("Error", "Es gibt keine Möglichkeit diese Daten nochmal von Datenbanken zu konstruieren.")
                 if(msg):
-                    db.delete_termine_table()
+                    Database().delete_termine_table()
                     refresh=self.display_data()
 

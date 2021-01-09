@@ -1,5 +1,4 @@
-import sys
-import bcrypt
+import sys, bcrypt
 import global_module
 from database import Database
 from patienten import *
@@ -8,8 +7,6 @@ from rechnungen import *
 from calender import *
 from user import *
 from manage_users import *
-
-db = Database()
 
 try:
     import Tkinter as tk
@@ -23,7 +20,7 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = True
 
-class login:
+class login(object):
     def __init__(self, parent):
         self.TNotebook1=parent
 
@@ -55,7 +52,7 @@ class login:
         self.entrys()
 
     def entrys(self):
-        if (db.check_tables('users'))== 0:
+        if (Database().check_tables('users'))== 0:
             self.UsernameEntry.bind("<Return>", self.register)
             self.PasswordEntry.bind("<Return>", self.register)
 
@@ -87,7 +84,7 @@ class login:
         self.hashed = bcrypt.hashpw(self.PasswordEntry.get().encode(), self.salt)
         data = (self.UsernameEntry.get(),self.hashed, "Administrator**", "False")
         if all(data):
-            db.insert_user(data)
+            Database().insert_user(data)
             self.entrys()
             self.showerror = tk.Label(self.Loginframe, text="User admin registerd successfuly!", bg="#f6f6f6")#'#b3e7f4')
             self.showerror.place(relx=0.0, rely=0.80, height=51, width=500, bordermode='ignore')
@@ -102,7 +99,7 @@ class login:
         global_module.active_user=self.UsernameEntry.get()
         inputData = ((self.UsernameEntry.get()), (self.PasswordEntry.get()),)
         if all(inputData):
-            if (db.validate_user(data, inputData)):
+            if (Database().validate_user(data, inputData)):
                 self.UsernameEntry.unbind("<Return>")
                 self.PasswordEntry.unbind("<Return>")
                 self.LoginButton.unbind("<Return>")
@@ -110,8 +107,8 @@ class login:
                     self.RegisterButton.unbind("<Return>")
                 self.TNotebook1.hide(0)
                 isActive=("True", self.UsernameEntry.get())
-                db.set_user_active(isActive)
-                role = db.get_user_role(data)
+                Database().set_user_active(isActive)
+                role = Database().get_user_role(data)
                 patienten(self.TNotebook1)
                 leistungen(self.TNotebook1)
                 rechnungen(self.TNotebook1)

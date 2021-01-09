@@ -1,16 +1,13 @@
 import sys
 import bcrypt
 import time
-from tkinter import *
 from ttkthemes import ThemedStyle
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
-from tkinter import messagebox
+from tkinter import messagebox, PhotoImage, Menu
 from database import Database
 from image_base64 import user_icon
 import fileinput
 import global_module
-
-db = Database()
 
 try:
     import Tkinter as tk
@@ -30,7 +27,7 @@ _compcolor = '#5dbf33' # X11 color: 'gray85'
 _ana1color = '#f6f6f6' # X11 color: 'gray85'
 _ana2color = '#f6f6f6' # Closest X11 color: 'gray92'
 
-class user:
+class user(object):
     def __init__(self, parent):
 
         self.TNotebook1=parent
@@ -107,11 +104,11 @@ class user:
         validate_data = ((self.username), (self.Old_Pass_Entry.get()),)
         username = ((self.username),)
         if all(validate_data):
-            if (db.validate_user(username, validate_data)):
+            if (Database().validate_user(username, validate_data)):
                 if self.New_Pass_Entry.get() == self.Confirm_Pass_Entry.get():
                     self.hashed = bcrypt.hashpw(self.New_Pass_Entry.get().encode(), self.salt)
                     data = (self.hashed, self.username,)
-                    db.update_user_password(data)
+                    Database().update_user_password(data)
                     self.root.destroy()
                 else:
                     self.showerror = tk.Label(self.root, text="Passwort stimmt nicht überein!", bg="#f6f6f6")
@@ -125,7 +122,7 @@ class user:
     def user_logout(self):
         import login
         isnotActive=("False", self.username)
-        db.set_user_active(isnotActive)
+        Database().set_user_active(isnotActive)
         for item in self.TNotebook1.winfo_children():
             item.destroy()
         self.menubutton.destroy()
@@ -142,8 +139,8 @@ class user:
         key = ("default_path",)
         update_data = ( new_dir, "default_path", )
         insert_data = ( "default_path", new_dir, )
-        if (db.get_setting(key)):
-            db.update_setting(update_data)
+        if (Database().get_setting(key)):
+            Database().update_setting(update_data)
         else:
-            db.insert_setting(insert_data)
+            Database().insert_setting(insert_data)
 

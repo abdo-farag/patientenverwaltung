@@ -1,20 +1,18 @@
 import sys
 import locale
 import csv
-from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
-from tkinter import messagebox
+from tkinter import messagebox, END
 from database import Database
 from datetime import datetime
-from tooltip import *
-from scrollbar_treeview import *
+from tooltip import CreateToolTip
+from scrollbar_treeview import ScrolledTreeView
 import global_module
-db = Database()
 
 key = ("default_path",)
-if (db.get_setting(key)):
-    default_path = db.get_setting(key)[0][2]+'/'
+if (Database().get_setting(key)):
+    default_path = Database().get_setting(key)[0][2]+'/'
 else:
     default_path = global_module.default_path
 
@@ -31,7 +29,7 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = True
 
-class patienten:
+class patienten(object):
     def __init__(self, parent):
 
         self.TNotebook1=parent
@@ -258,7 +256,7 @@ class patienten:
                     self.Adresse.get(),
                     self.Krankenversicherung_Box.get(),
                     )
-            db.insert_patient(data)
+            Database().insert_patient(data)
             refresh=self.display_data()
         else:
             self.valueErrorMessage = "Invalid input in field " + validata_data
@@ -278,7 +276,7 @@ class patienten:
         for selected in selection:
             values = self.Treeview.item(selected, 'values')
             data = (values[0],)
-            db.delete_patient(data)
+            Database().delete_patient(data)
         refresh=self.display_data()
 
     def double_click(self, _event=None):
@@ -346,7 +344,7 @@ class patienten:
                     self.Treeview.set(selected, '#1')
                     )
             self.Treeview.item(selected, text='', values=(data))
-            db.update_patient(data)
+            Database().update_patient(data)
             refresh=self.display_data()
 
         else:
@@ -387,7 +385,7 @@ class patienten:
            refresh=self.display_data()
         else:
             i = 0
-            for record in (db.search_patient(lst)):
+            for record in (Database().search_patient(lst)):
                 i=i+1
                 if (i % 2):
                     self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
@@ -408,7 +406,7 @@ class patienten:
         for data in self.Treeview.get_children():
             self.Treeview.delete(data)
         i=0
-        for record in (db.display_patienten()):
+        for record in (Database().display_patienten()):
             i=i+1
             if (i % 2):
                 self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
@@ -426,12 +424,12 @@ class patienten:
             with open(fname, 'a', newline='') as patienten:
                 self.write = csv.writer(patienten, dialect='excel')
                 #self.write.writerow(header)
-                for record in (db.display_patienten()):
+                for record in (Database().display_patienten()):
                     self.write.writerow(record)
 
     def load_from_csv(self):
         import time
-        db.createTable()
+        Database().createTable()
         name = askopenfilename(parent=self.TNotebook1, initialdir=default_path, title = "Import File", filetypes=(
             ("CSV files", "*.csv"),
             ("Excel files", "*.xlsx"),
@@ -489,11 +487,11 @@ class patienten:
                                 pass
                             else:
                                 lst[0]=''
-                                if (db.search_patient(lst)):
+                                if (Database().search_patient(lst)):
                                     pass
                                 else:
                                     del lst[0]
-                                    db.insert_patient(lst)
+                                    Database().insert_patient(lst)
                                     self.progress["value"] = bar
                                     self.progress.update()
                                     self.display_data()
@@ -509,6 +507,6 @@ class patienten:
             if(error):
                 msg =  messagebox.askyesno("Error", "Es gibt keine Möglichkeit diese Daten nochmal von Datenbanken zu konstruieren.")
                 if(msg):
-                    db.delete_patienten_table()
+                    Database().delete_patienten_table()
                     refresh=self.display_data()
 
