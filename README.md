@@ -29,12 +29,15 @@
 Hinweis: Standard Datenbank und Rechnungen Verzeichnis `~/Patientenverwaltung/` "Home Directory" 
 
 ## Package Diagramm
+
 ![](diagramme/packages_pv.svg)
 
 ## Sequence diagram
+
 ![](diagramme/sequence-diagram.svg)
 
-##Use Case Diagram
+## Use Case Diagram
+
 ![](diagramme/Use_Case_Diagram.svg)
 
 
