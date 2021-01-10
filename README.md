@@ -30,8 +30,7 @@
 innerhalb des Repository-Verzeichnisses:
 ```
 cd  \patientenverwaltung_ws2021
-pip3 install -r requirements_win.txt oder
-python -m  pip3 install -r requirements_win.txt
+pip3 install -r requirements_win.txt
 ```
 
 #### Auf  Linux  Betriebssystem
@@ -41,15 +40,15 @@ cd patientenverwaltung_ws2021
 sudo pip3 install -r requirements.txt
 ```
 
-3- Application start
+4- Application starten
 ```
 python3 app.py
 ```
 
 Hinweis: Standard Datenbank und Rechnungen Verzeichnis `~/Patientenverwaltung/` 
 ~ ist "Home Directory":
-on Windows C:\Users\USERNAME\Patientenverwaltung
-on Linux /home/USERNAME/Patientenverwaltung
+Auf Windows C:\Users\USERNAME\Patientenverwaltung
+Auf Linux /home/USERNAME/Patientenverwaltung
 
 ## Package Diagramm
 
