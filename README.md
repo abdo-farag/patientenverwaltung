@@ -12,6 +12,15 @@
 * [x] pytweening (Pytion Notification module)
 
 ## Führen Sie die Anwendung aus
+
+#### Von Portable ausführbare Datei
+
+[Patientenverwaltung-Linux](https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021/-/raw/master/exec/linux/patientenverwaltung)
+
+[Patientenverwaltung-Windows.exe](https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021/-/raw/master/exec/win/patientenverwaltung.exe)
+
+#### Von den Quellcode
+
 1- install python >=3
 
 2- `git clone https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021.git` oder download [release](https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021/-/releases)
