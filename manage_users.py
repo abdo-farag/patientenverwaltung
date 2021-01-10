@@ -101,28 +101,28 @@ class manage_users(object):
         self.EinfuegenB = ttk.Button(self.TNotebook1_t5, text = "Einfügen", command = self.insert_user)
         self.EinfuegenB.place(relx=0.0, rely=0.02, height=38, width=150)
         self.EinfuegenB_Tip = CreateToolTip(self.EinfuegenB,
-                'Diese Schaltfläche dient zum Hinzufügen eines neuen Patient.\n'
+                'Die Taste dient zum Hinzufügen eines neuen User.\n'
                 'Füllen Sie die folgenden Felder aus und drücken Sie mich.')
 
 
         self.LoeschenB = ttk.Button(self.TNotebook1_t5, text = "Löschen", command = self.delete_record)
         self.LoeschenB.place(relx=0.0, rely=0.09, height=38, width=150)
         self.LoeschenB_Tip = CreateToolTip(self.LoeschenB,
-                'Diese Schaltfläche dient zum Löschen ein oder mehr Patienten.\n'
+                'Die Taste dient zum Löschen ein oder mehr Users.\n'
                 'Drücken Sie auf einen Rekord, dann drücken Sie mich.')
 
         self.AuswaehlenB = ttk.Button(self.TNotebook1_t5, width = 20, text = "Auswählen", command = self.select_record)
         self.AuswaehlenB.place(relx=0.2, rely=0.02, height=38, width=150)
         self.AuswaehlenB_Tip = CreateToolTip(self.AuswaehlenB,
-                'Diese Schaltfläche dient zum einen Rekord zu auswählen, um zu aktualisieren.\n'
+                'Die Taste dient zum einen Rekord zu auswählen, um zu aktualisieren.\n'
                 'Drücken Sie auf einen Rekord, dann drücken Sie mich.')
 
 
         self.AktualisierenB = ttk.Button(self.TNotebook1_t5, width = 20, text = "Aktualisieren", command = self.update_record)
         self.AktualisierenB.place(relx=0.2, rely=0.09, height=38, width=150)
         self.AktualisierenB_Tip = CreateToolTip(self.AktualisierenB,
-                'Diese Schaltfläche dient zum Aktualisieren Patientdaten.\n'
-                'Nach der Auswahl eines Patienten. Ändern Sie, was Sie wollen, dann drücken Sie mich.')
+                'Die Taste dient zum Aktualisieren Users.\n'
+                'Nach der Auswahl ein Rekord. Ändern Sie, was Sie wollen, dann drücken Sie mich.')
 
         refresh=self.display_data()
 
