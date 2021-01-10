@@ -15,8 +15,7 @@
 
 #### Von Portable ausführbare Datei
 
-[Patientenverwaltung-Linux](https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021/-/raw/master/exec/linux/patientenverwaltung)
-
+[Patientenverwaltung-Linux](https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021/-/raw/master/exec/linux/patientenverwaltung)\
 [Patientenverwaltung-Windows.exe](https://mygit.th-deg.de/af21393/patientenverwaltung_ws2021/-/raw/master/exec/win/patientenverwaltung.exe)
 
 #### Von den Quellcode
@@ -45,9 +44,9 @@ sudo pip3 install -r requirements.txt
 python3 app.py
 ```
 
-Hinweis: Standard Datenbank und Rechnungen Verzeichnis `~/Patientenverwaltung/` 
-~ ist "Home Directory":
-Auf Windows C:\Users\USERNAME\Patientenverwaltung
+Hinweis: Standard Datenbank und Rechnungen Verzeichnis `~/Patientenverwaltung/`\
+~ ist "Home Directory":\
+Auf Windows C:\Users\USERNAME\Patientenverwaltung\
 Auf Linux /home/USERNAME/Patientenverwaltung
 
 ## Package Diagramm
