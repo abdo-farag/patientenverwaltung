@@ -1,3 +1,6 @@
+#! /usr/bin/env python3
+#-*- coding:utf-8 -*-
+
 from faker import Faker
 import random
 from datetime import datetime
@@ -58,7 +61,7 @@ def female():
     year = fake.year()
     date = day + "." + month +"." + year
     date = date_checker(date)
-    iD=str(i)
+    iD=str(y)
     data = iD +","+ f_name +","+l_name +","+'Weiblich'+","+ date +","+address +","+ ver
     data_lst = data.split(",")
     return data_lst
@@ -78,7 +81,7 @@ def male():
     year = fake.year()
     date = day + "." + month +"." + year
     date = date_checker(date)
-    iD=str(i)
+    iD=str(x)
     data = iD +","+ f_name +","+l_name +","+'Männlich'+","+ date +","+address +","+ ver
     data_lst = data.split(",")
     return data_lst
@@ -86,8 +89,11 @@ def male():
 
 with open('fake_data.csv', 'a', newline='', encoding="utf-8") as fake_data:
     write = csv.writer(fake_data, dialect='excel')
+    x,y = 1,2
     for i in range(500):
         male_data=male()
         female_data=female()
         write.writerow(male_data)
         write.writerow(female_data)
+        x = x + 2
+        y = y + 2

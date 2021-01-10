@@ -1,9 +1,9 @@
 import csv
-import calendar, datetime, sys, subprocess
+import calendar, datetime, time, sys, subprocess
 from tkcalendar import Calendar, DateEntry
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
-from tkinter import messagebox, END
+from tkinter import messagebox, END, HORIZONTAL
 from database import Database
 from tooltip import CreateToolTip
 from scrollbar_treeview import ScrolledTreeView
@@ -94,7 +94,6 @@ class termine(object):
         self.Label3.place(relx=0.375, rely=0.03, height=21, width=260)
         self.Label3.configure(anchor='w',text='''Termin:''', font="Arial 12 bold")
 
-
         self.Termin_H = ttk.Spinbox(self.TreeviewFrame,from_=00,to=23,format="%02.0f",wrap=True)
         self.Termin_H.place(relx=0.375, rely=0.06, relheight=0.035, relwidth=0.06)
         self.Termin_H.configure(background="white", font="Arial 15 bold", justify='left')
@@ -111,13 +110,7 @@ class termine(object):
         self.Tag.place(relx=0.500, rely=0.06, relheight=0.035, relwidth=0.120)
         self.Tag.configure(background="white", font="Arial 12 bold", justify='left')
 
-        self.Label5 = ttk.Label(self.TreeviewFrame)
-        self.Label5.place(relx=0.625, rely=0.03, height=21, width=260)
-        self.Label5.configure(anchor='w', text='''Datum:''', font="Arial 12 bold")
-
-        self.Datum = DateEntry(self.TreeviewFrame,locale='de_DE', date_pattern='dd.mm.y', width=12, foreground='white', borderwidth=2)
-        self.Datum.place(relx=0.625, rely=0.06, relheight=0.035, relwidth=0.120)
-        self.Datum.configure(background="green", font="Arial 12 bold", justify='left')
+        self.dateentry_view()
 
         self.Label6 = ttk.Label(self.TreeviewFrame)
         self.Label6.place(relx=0.750, rely=0.03, height=21, width=260)
@@ -192,45 +185,55 @@ class termine(object):
                 'Die Taste dient zum Löchen Alle Daten .')
         refresh=self.display_data()
 
+    def dateentry_view(self):
+        self.Label5 = ttk.Label(self.TreeviewFrame)
+        self.Label5.place(relx=0.625, rely=0.03, height=21, width=260)
+        self.Label5.configure(anchor='w', text='''Datum:''', font="Arial 12 bold")
+
+        self.Datum = DateEntry(self.TreeviewFrame,locale='de_DE', date_pattern='dd.mm.y', width=12, foreground='white', borderwidth=2)
+        self.Datum.place(relx=0.625, rely=0.06, relheight=0.035, relwidth=0.120)
+        self.Datum.configure(background="green", font="Arial 12 bold", justify='left')
+        self.Datum.bind("<<DateEntrySelected>>", self.get_day_name)
+
+
     def update_date_time(self):
         today = datetime.date.today()
         self.tag_name = calendar.day_name[today.weekday()]
         self.Tag.insert(0, self.tag_name)
-
         self.Now = datetime.datetime.now()
         self.hour = self.Now.strftime("%H")
         self.minute = self.Now.strftime("%M")
         self.Termin_H.insert(0, self.hour)
         self.Termin_M.insert(0, self.minute)
 
+    def get_day_name(self, _event=None):
+        date = self.Datum.get().split(".")
+        day_name = datetime.datetime(int(date[2]),int(date[1]),int(date[0])).strftime("%A")
+        self.Tag.delete(0, END)
+        self.Tag.insert(0, day_name)
 
     def insert_data(self):
-        Name = self.Patient.get().split(" ")
-        data = (
-                Name[0].capitalize()+' '+Name[1].capitalize(),
-                self.Tel_Nr.get(),
-                self.Termin_H.get()+':'+self.Termin_M.get(),
-                self.Tag.get(),
-                self.Datum.get(),
-                self.Zweck.get(),
-                self.Notizen.get(),
-                )
-        Database().insert_termin(data)
+        if (self.Patient.get()):
+            Name = self.Patient.get().split(" ")
+            data = (
+                    Name[0].capitalize()+' '+Name[1].capitalize(),
+                    self.Tel_Nr.get(),
+                    self.Termin_H.get()+':'+self.Termin_M.get(),
+                    self.Tag.get(),
+                    self.Datum.get(),
+                    self.Zweck.get(),
+                    self.Notizen.get(),
+                    )
+            Database().insert_termin(data)
         self.display_data()
-        self.Patient.delete(0, END)
-        self.Tel_Nr.delete(0, END)
-        self.Termin_H.delete(0, END)
-        self.Termin_M.delete(0, END)
-        #self.Tag.delete(0, END)
-        #self.Datum.delete(0, END)
-        self.Zweck.delete(0, END)
-        self.Notizen.delete(0, END)
 
     def delete_record(self):
         selection = self.Treeview.selection()
         for selected in selection:
             values = self.Treeview.item(selected, 'values')
-            data = (values[0],)
+            search_data=('', values[1], values[2], values[3], '', '', '', '',)
+            ID = (Database().search_termin(search_data)[0])[0]
+            data = (ID,)
             Database().delete_termin(data)
         refresh=self.display_data()
 
@@ -238,19 +241,21 @@ class termine(object):
         self.select_record()
 
     def select_record(self):
-        self.ID.delete(0, END)
-        self.Patient.delete(0, END)
-        self.Tel_Nr.delete(0, END)
-        self.Termin_H.delete(0, END)
-        self.Termin_M.delete(0, END)
-        self.Tag.delete(0, END)
-        self.Datum.delete(0, END)
-        self.Zweck.delete(0, END)
-        self.Notizen.delete(0, END)
         selected= self.Treeview.focus()
-        values = self.Treeview.item(selected, 'values')
-        Termin = values[3].split(":")
-        if (values):
+        if (selected):
+            self.ID.delete(0, END)
+            self.Patient.delete(0, END)
+            self.Tel_Nr.delete(0, END)
+            self.Termin_H.delete(0, END)
+            self.Termin_M.delete(0, END)
+            self.Tag.delete(0, END)
+            self.Datum.delete(0, END)
+            self.Zweck.delete(0, END)
+            self.Notizen.delete(0, END)
+
+            values = self.Treeview.item(selected, 'values')
+            Termin = values[3].split(":")
+
             self.ID.insert(0, values[0])
             self.Patient.insert(0, values[1])
             self.Tel_Nr.insert(0, values[2])
@@ -267,6 +272,9 @@ class termine(object):
     def update_record(self):
         selected = self.Treeview.focus()
         if (selected):
+            values = self.Treeview.item(selected, 'values')
+            search_data=('', values[1], values[2], values[3], '', '', '', '',)
+            ID = (Database().search_termin(search_data)[0])[0]
             data = (
                     self.Patient.get(),
                     self.Tel_Nr.get(),
@@ -275,37 +283,30 @@ class termine(object):
                     self.Datum.get(),
                     self.Zweck.get(),
                     self.Notizen.get(),
-                    self.Treeview.set(selected, '#1')
+                    ID, 
                     )
             self.Treeview.item(selected, text='', values=(data))
             Database().update_termin(data)
-            refresh=self.display_data()
-
-        else:
-            self.valueErrorMessage = "Invalid input in field " + self.test
-            self.messagebox = messagebox.showerror("Value Error", self.valueErrorMessage)
-        self.ID.delete(0, END)
-        self.Patient.delete(0, END)
-        self.Tel_Nr.delete(0, END)
-        self.Termin_H.delete(0, END)
-        self.Termin_M.delete(0, END)
-        #self.Tag.delete(0, END)
-        #self.Datum.delete(0, END)
-        self.Zweck.delete(0, END)
-        self.Notizen.delete(0, END)
+        self.display_data()
 
 
     def search_record(self):
         for data in self.Treeview.get_children():
             self.Treeview.delete(data)
-        Name = self.Patient.get().split(" ")
-        if (Name):
-            Name=Name[0].capitalize()+' '+Name[1].capitalize(),
+        if (self.Patient.get()):
+            Name = self.Patient.get().split(" ")
+            Name=Name[0].capitalize()+' '+Name[1].capitalize()
+        else:
+            Name = ''
+        if(self.Termin_H.get() and self.Termin_M.get()):
+            Termin = self.Termin_H.get()+':'+self.Termin_M.get()
+        else:
+            Termin = ''
         data = (
-                self.ID.get(),
-                Name[0].capitalize()+' '+Name[1].capitalize(),
+                '',
+                Name,
                 self.Tel_Nr.get(),
-                self.Termin_H.get()+':'+self.Termin_M.get(),
+                Termin,
                 self.Tag.get(),
                 self.Datum.get(),
                 self.Zweck.get(),
@@ -324,21 +325,34 @@ class termine(object):
         self.Tel_Nr.delete(0, END)
         self.Termin_H.delete(0, END)
         self.Termin_M.delete(0, END)
-        #self.Tag.delete(0, END)
-        #self.Datum.delete(0, END)
+        self.Tag.delete(0, END)
+        self.Datum.delete(0, END)
         self.Zweck.delete(0, END)
         self.Notizen.delete(0, END)
+        self.update_date_time()
 
     def display_data(self):
         for data in self.Treeview.get_children():
             self.Treeview.delete(data)
+        select_data = Database().display_termine()
+        strp_data = datetime.datetime.strptime
+        strp_time = time.strptime
+        select_time_sorted = sorted(select_data, key=lambda time: (strp_time(time[3],"%H:%M")))
+        select_date_sorted = sorted(select_time_sorted, key=lambda date: (strp_data(date[5],"%d.%m.%Y")))
         i=0
-        for record in (Database().display_termine()):
-            i=i+1
-            if (i % 2):
-                self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
+        for record in select_date_sorted:
+            date = record[5].split(".")
+            date = datetime.date(int(date[2]),int(date[1]),int(date[0]))
+            if date < datetime.date.today():
+                pass
             else:
-                self.Treeview.insert('', 'end', values=(record), tags = ('evenrow'))
+                i=i+1
+                record = list(record)
+                record[0] = i
+                if (i % 2):
+                    self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
+                else:
+                    self.Treeview.insert('', 'end', values=(record), tags = ('evenrow'))
         self.ID.delete(0, END)
         self.Patient.delete(0, END)
         self.Tel_Nr.delete(0, END)

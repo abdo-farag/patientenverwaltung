@@ -9,3 +9,4 @@ reportlab==3.5.59
 six==1.15.0
 tkcalendar==1.6.1
 ttkthemes==3.2.0
+faker==5.4.0

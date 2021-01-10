@@ -219,6 +219,8 @@ class manage_users(object):
         i=0
         for record in (Database().display_users()):
             i=i+1
+            record = list(record)
+            record[0] = i
             if (i % 2):
                 self.Treeview.insert('', 'end', values=(record), tags = ('oddrow'))
             else:

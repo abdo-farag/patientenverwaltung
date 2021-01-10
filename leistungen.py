@@ -3,7 +3,7 @@ import locale
 import csv
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfilename
-from tkinter import messagebox, END
+from tkinter import messagebox, END, HORIZONTAL
 from database import Database
 from datetime import datetime
 from tooltip import CreateToolTip

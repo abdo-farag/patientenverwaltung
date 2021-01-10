@@ -28,7 +28,7 @@ class Database(object):
                 self.conn = sqlite3.connect(db_path)
             self.curr = self.conn.cursor()
         except:
-            sys.exit() #print("Failed")
+            sys.exit()
 
     def check_tables(self, table):
         self.check = 'SELECT count(*) FROM' +' '+ table + ';'
